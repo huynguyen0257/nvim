@@ -139,6 +139,8 @@ vim.opt.scrolloff = 8
 -- [[ Use tab on visual mode ]]
 vim.keymap.set('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.keymap.set('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
+vim.keymap.set('n', '<Tab>', '><space>', { noremap = true, silent = true })
+vim.keymap.set('n', '<S-tab>', '<<space>', { noremap = true, silent = true })
 -- Setup split behavior
 vim.opt.splitbelow = true
 vim.opt.splitright = true

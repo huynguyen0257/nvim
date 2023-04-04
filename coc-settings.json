@@ -1,7 +1,0 @@
-{
-    "javascript.suggest.autoImports": true,
-    "typescript.suggest.autoImports": true,
-    "typescript.format.insertSpaceAfterConstructor": true,
-    "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
-    "typescript.inlayHints": "all"
-}
