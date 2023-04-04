@@ -64,6 +64,7 @@ require('packer').startup(function(use)
     -- [[ Themes ]]
     use 'navarasu/onedark.nvim' -- Theme inspired by Atom
     use 'rebelot/kanagawa.nvim'
+    use 'sainnhe/everforest'
 
     use 'nvim-lualine/lualine.nvim' -- Fancier statusline
     use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
@@ -127,9 +128,9 @@ vim.o.smartcase = true
 -- Decrease update time
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
--- Set colorscheme
+-- Set themes
 vim.o.termguicolors = true
-vim.cmd [[colorscheme kanagawa]]
+vim.cmd [[colorscheme everforest]]
 -- Set the behavior of tab
 vim.opt.tabstop = 4 -- insert 4 spaces for a tab
 vim.opt.expandtab = true
