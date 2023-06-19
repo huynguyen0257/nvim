@@ -130,7 +130,7 @@ vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 -- Set themes
 vim.o.termguicolors = true
-vim.cmd [[colorscheme everforest]]
+vim.cmd [[colorscheme kanagawa]]
 -- Set the behavior of tab
 vim.opt.tabstop = 4 -- insert 4 spaces for a tab
 vim.opt.expandtab = true
@@ -140,8 +140,6 @@ vim.opt.scrolloff = 8
 -- [[ Use tab on visual mode ]]
 vim.keymap.set('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.keymap.set('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
-vim.keymap.set('n', '<Tab>', '><space>', { noremap = true, silent = true })
-vim.keymap.set('n', '<S-tab>', '<<space>', { noremap = true, silent = true })
 -- Setup split behavior
 vim.opt.splitbelow = true
 vim.opt.splitright = true
@@ -198,33 +196,56 @@ vim.g.loaded_netrwPlugin = 1
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
 
--- OR setup with some options
+-- OR setup with some option
+local function nvim_tree_on_attach(bufnr)
+  local api = require('nvim-tree.api')
+  local function opts(desc)
+    return { desc = '[File Explorer] ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+  vim.keymap.set('n', '<c-s>', api.node.open.vertical,              opts('Open vertical split'))
+  vim.keymap.set('n', '<c-h>', api.node.open.horizontal,            opts('Open horizontal split'))
+  vim.keymap.set('n', '<c-n>', api.fs.create,                       opts('Create node'))
+  vim.keymap.set('n', '<c-d>', api.fs.remove,                       opts('Delete node'))
+  vim.keymap.set('n', '<c-r>', api.fs.rename,                       opts('Rename node'))
+  vim.keymap.set('n', '<c-x>', api.fs.cut,                          opts('Cut node'))
+  vim.keymap.set('n', '<c-c>', api.fs.copy.node,                    opts('Copy node'))
+  vim.keymap.set('n', '<c-v>', api.fs.paste,                        opts('Paste node'))
+  vim.keymap.set('n', 'H',     api.tree.toggle_hidden_filter,       opts('Toggle Dotfiles'))
+  vim.keymap.set('n', 'I',     api.tree.toggle_gitignore_filter,    opts('Toggle Git Ignore'))
+  vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,    opts('Toggle Git Clean'))
+  vim.keymap.set('n', '<CR>',  api.node.open.edit,                  opts('Open'))
+end
 require("nvim-tree").setup({
     sort_by = "case_sensitive",
+    on_attach = nvim_tree_on_attach,
     view = {
         adaptive_size = true,
         hide_root_folder = false,
-        mappings = {
-            list = {
-                { key = "u", action = "dir_up" },
-                { key = "<c-s>", action = "vsplit", desc = "[File Explorer] Open vertical split" },
-                { key = "<c-h>", action = "split", desc = "[File Explorer] Open horizontal split" },
-                { key = "<c-n>", action = "create", desc = "[File Explorer] Create Node" },
-                { key = "<c-d>", action = "remove", desc = "[File Explorer] Detele Node" },
-                { key = "<c-r>", action = "rename", desc = "[File Explorer] Rename Node" },
-                { key = "<c-x>", action = "cut", desc = "[File Explorer] Cut Node" },
-                { key = "<c-c>", action = "copy", desc = "[File Explorer] Copy Node" },
-                { key = "<c-v>", action = "paste", desc = "[File Explorer] Paste Node" },
-            },
-        },
     },
     renderer = {
         group_empty = true,
     },
-    filters = {
-        dotfiles = false,
-    },
+    -- filters = {
+    --     dotfiles = true,
+    -- },
 })
+local function open_nvim_tree(data)
+  -- buffer is a directory
+  local directory = vim.fn.isdirectory(data.file) == 1
+  if not directory then
+    return
+  end
+  -- create a new, empty buffer
+  vim.cmd.enew()
+  -- wipe the directory buffer
+  vim.cmd.bw(data.buf)
+  -- change to the directory
+  vim.cmd.cd(data.file)
+  -- open the tree
+  require("nvim-tree.api").tree.open()
+end
+vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
 vim.keymap.set('n', '<c-b>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<c-t>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
@@ -332,7 +353,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'javascript', 'help' },
 
     highlight = { enable = true },
     indent = { enable = true, disable = { 'python' } },
@@ -465,7 +486,7 @@ local servers = {
     -- rust_analyzer = {},
     -- tsserver = {},
 
-    sumneko_lua = {
+    lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
@@ -516,9 +537,9 @@ local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
 cmp.setup {
-    -- completion = {
-    --     autocomplete = true -- Auto display completion menu
-    -- },
+    completion = {
+        autocomplete = {'TextChanged'} -- Auto display completion menu
+    },
     snippet = {
         expand = function(args)
             luasnip.lsp_expand(args.body)
