@@ -19,7 +19,10 @@ require('packer').startup(function(use)
             'williamboman/mason-lspconfig.nvim',
 
             -- Useful status updates for LSP
-            'j-hui/fidget.nvim',
+            use {
+                'j-hui/fidget.nvim',
+                tag = 'legacy',
+            },
 
             -- Additional lua configuration, makes nvim stuff amazing
             'folke/neodev.nvim',
@@ -27,8 +30,11 @@ require('packer').startup(function(use)
             -- Prettier & Lint for LSP
             -- Can not setting prettier with mason yet -> use null-ls and self config instead
             'jose-elias-alvarez/null-ls.nvim'
-        },
+        }
     }
+    -- Ensure neodev.nvim and null-ls.nvim are installed explicitly
+    use 'folke/neodev.nvim'
+    use 'jose-elias-alvarez/null-ls.nvim'
 
     use { -- Autocompletion
         'hrsh7th/nvim-cmp',
@@ -37,7 +43,7 @@ require('packer').startup(function(use)
 
     use 'github/copilot.vim' -- :Copilot status - to check copilot status
 
-    use { -- Highlight, edit, and navigate code
+    use {                    -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
         run = function()
             pcall(require('nvim-treesitter.install').update { with_sync = true })
@@ -65,18 +71,20 @@ require('packer').startup(function(use)
     use 'navarasu/onedark.nvim' -- Theme inspired by Atom
     use 'rebelot/kanagawa.nvim'
     use 'sainnhe/everforest'
+    use 'catppuccin/nvim'
 
-    use 'nvim-lualine/lualine.nvim' -- Fancier statusline
+    use 'nvim-lualine/lualine.nvim'           -- Fancier statusline
     use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
-    use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
-    use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
-    use 'jiangmiao/auto-pairs' -- Auto pairs brackets, parens, quotes, etc.
+    use 'numToStr/Comment.nvim'               -- "gc" to comment visual regions/lines
+    use 'tpope/vim-sleuth'                    -- Detect tabstop and shiftwidth automatically
+    use 'jiangmiao/auto-pairs'                -- Auto pairs brackets, parens, quotes, etc.
 
     -- Fuzzy Finder (files, lsp, etc)
     use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
 
     -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
+
 
     -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
     local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -130,11 +138,13 @@ vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 -- Set themes
 vim.o.termguicolors = true
+-- vim.cmd [[colorscheme everforest]]
 vim.cmd [[colorscheme kanagawa]]
+-- vim.cmd [[colorscheme catppuccin]]
 -- Set the behavior of tab
-vim.opt.tabstop = 4 -- insert 4 spaces for a tab
+vim.opt.tabstop = 4     -- insert 4 spaces for a tab
 vim.opt.expandtab = true
-vim.opt.shiftwidth = 4 -- the number of spaces inserted for each indentation
+vim.opt.shiftwidth = 4  -- the number of spaces inserted for each indentation
 vim.opt.softtabstop = 4 -- number of spaces to use for each step of (auto)indent
 vim.opt.scrolloff = 8
 -- [[ Use tab on visual mode ]]
@@ -198,30 +208,30 @@ vim.opt.termguicolors = true
 
 -- OR setup with some option
 local function nvim_tree_on_attach(bufnr)
-  local api = require('nvim-tree.api')
-  local function opts(desc)
-    return { desc = '[File Explorer] ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-  end
+    local api = require('nvim-tree.api')
+    local function opts(desc)
+        return { desc = '[File Explorer] ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
 
-  vim.keymap.set('n', '<c-s>', api.node.open.vertical,              opts('Open vertical split'))
-  vim.keymap.set('n', '<c-h>', api.node.open.horizontal,            opts('Open horizontal split'))
-  vim.keymap.set('n', '<c-n>', api.fs.create,                       opts('Create node'))
-  vim.keymap.set('n', '<c-d>', api.fs.remove,                       opts('Delete node'))
-  vim.keymap.set('n', '<c-r>', api.fs.rename,                       opts('Rename node'))
-  vim.keymap.set('n', '<c-x>', api.fs.cut,                          opts('Cut node'))
-  vim.keymap.set('n', '<c-c>', api.fs.copy.node,                    opts('Copy node'))
-  vim.keymap.set('n', '<c-v>', api.fs.paste,                        opts('Paste node'))
-  vim.keymap.set('n', 'H',     api.tree.toggle_hidden_filter,       opts('Toggle Dotfiles'))
-  vim.keymap.set('n', 'I',     api.tree.toggle_gitignore_filter,    opts('Toggle Git Ignore'))
-  vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,    opts('Toggle Git Clean'))
-  vim.keymap.set('n', '<CR>',  api.node.open.edit,                  opts('Open'))
+    vim.keymap.set('n', '<c-s>', api.node.open.vertical, opts('Open vertical split'))
+    vim.keymap.set('n', '<c-h>', api.node.open.horizontal, opts('Open horizontal split'))
+    vim.keymap.set('n', '<c-n>', api.fs.create, opts('Create node'))
+    vim.keymap.set('n', '<c-d>', api.fs.remove, opts('Delete node'))
+    vim.keymap.set('n', '<c-r>', api.fs.rename, opts('Rename node'))
+    vim.keymap.set('n', '<c-x>', api.fs.cut, opts('Cut node'))
+    vim.keymap.set('n', '<c-c>', api.fs.copy.node, opts('Copy node'))
+    vim.keymap.set('n', '<c-v>', api.fs.paste, opts('Paste node'))
+    vim.keymap.set('n', 'H', api.tree.toggle_hidden_filter, opts('Toggle Dotfiles'))
+    vim.keymap.set('n', 'I', api.tree.toggle_gitignore_filter, opts('Toggle Git Ignore'))
+    vim.keymap.set('n', 'C', api.tree.toggle_git_clean_filter, opts('Toggle Git Clean'))
+    vim.keymap.set('n', '<CR>', api.node.open.edit, opts('Open'))
 end
 require("nvim-tree").setup({
     sort_by = "case_sensitive",
     on_attach = nvim_tree_on_attach,
     view = {
-        adaptive_size = true,
-        hide_root_folder = false,
+        adaptive_size = true
+        -- hide_root_folder = false,
     },
     renderer = {
         group_empty = true,
@@ -231,19 +241,19 @@ require("nvim-tree").setup({
     -- },
 })
 local function open_nvim_tree(data)
-  -- buffer is a directory
-  local directory = vim.fn.isdirectory(data.file) == 1
-  if not directory then
-    return
-  end
-  -- create a new, empty buffer
-  vim.cmd.enew()
-  -- wipe the directory buffer
-  vim.cmd.bw(data.buf)
-  -- change to the directory
-  vim.cmd.cd(data.file)
-  -- open the tree
-  require("nvim-tree.api").tree.open()
+    -- buffer is a directory
+    local directory = vim.fn.isdirectory(data.file) == 1
+    if not directory then
+        return
+    end
+    -- create a new, empty buffer
+    vim.cmd.enew()
+    -- wipe the directory buffer
+    vim.cmd.bw(data.buf)
+    -- change to the directory
+    vim.cmd.cd(data.file)
+    -- open the tree
+    require("nvim-tree.api").tree.open()
 end
 vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
@@ -282,10 +292,42 @@ require('Comment').setup({
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help indent_blankline.txt`
-require('indent_blankline').setup {
-    char = '┊',
-    show_trailing_blankline_indent = false,
+-- require('indent_blankline').setup {
+--     char = '┊',
+--     show_trailing_blankline_indent = false,
+-- }
+local highlight = {
+    "RainbowRed",
+    "RainbowYellow",
+    "RainbowBlue",
+    "RainbowOrange",
+    "RainbowGreen",
+    "RainbowViolet",
+    "RainbowCyan",
 }
+local hooks = require "ibl.hooks"
+-- create the highlight groups in the highlight setup hook, so they are reset
+-- every time the colorscheme changes
+hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+end)
+
+vim.g.rainbow_delimiters = { highlight = highlight }
+require("ibl").setup {
+    scope = { highlight = highlight },
+    indent = { char = '┊' },
+    whitespace = {
+        remove_blankline_trail = false,
+    }
+}
+
+hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
@@ -538,7 +580,7 @@ local luasnip = require 'luasnip'
 
 cmp.setup {
     completion = {
-        autocomplete = {'TextChanged'} -- Auto display completion menu
+        autocomplete = { 'TextChanged' } -- Auto display completion menu
     },
     snippet = {
         expand = function(args)
