@@ -42,6 +42,13 @@ require('packer').startup(function(use)
     }
 
     use 'github/copilot.vim' -- :Copilot status - to check copilot status
+    use { -- :CopilotChat - to open chat window
+      'CopilotC-Nvim/CopilotChat.nvim',
+        requires = {
+            'github/copilot.vim',
+            'nvim-lua/plenary.nvim'
+        }
+    }
 
     use {                    -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
@@ -260,6 +267,19 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 vim.keymap.set('n', '<c-b>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<c-t>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
 
+
+require("CopilotChat").setup {
+  debug = true, -- Enable debugging
+  -- See Configuration section for rest,
+  window = {
+    layout = "float",
+    width = 0.7,
+    height = 0.7,
+    border = "solid",
+    highlight = "Normal",
+  },
+}
+
 -- Set lualine as statusline
 -- See `:help lualine.txt`
 require('lualine').setup {
@@ -390,6 +410,11 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string,
     { desc = '[S]earch current [W]ord In Workspace' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = 'Telescope Git Status' })
+vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { desc = 'Telescope Git Branch' })
+vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Telescope Git Commits' })
+vim.keymap.set('n', '<leader>gC', require('telescope.builtin').git_bcommits, { desc = 'Telescope Git BCommits' })
+-- vim.keymap.set('n', '<leader>gr', require('telescope.builtin').git_bcommits_range, { desc = 'Telescope Git BCommits' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
