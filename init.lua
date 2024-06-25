@@ -73,6 +73,7 @@ require('packer').startup(function(use)
     -- use 'tpope/vim-fugitive'
     -- use 'tpope/vim-rhubarb'
     use 'lewis6991/gitsigns.nvim'
+    use 'rhysd/conflict-marker.vim'
 
     -- [[ Themes ]]
     use 'navarasu/onedark.nvim' -- Theme inspired by Atom
@@ -160,6 +161,14 @@ vim.keymap.set('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
 -- Setup split behavior
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+
+-- Setup conflict_maker
+vim.g.conflict_marker_highlight_group = 'Error';
+-- Default values
+vim.g.conflict_marker_begin = '^<<<<<<< \\@=';
+vim.g.conflict_marker_common_ancestors = '^||||||| .*$';
+vim.g.conflict_marker_separator = '^=======$';
+vim.g.conflict_marker_end   = '^>>>>>>> \\@=';
 
 -- [[ Copilot setup tab behavior ]]
 vim.g.copilot_no_tab_map = true
