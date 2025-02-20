@@ -1,3 +1,6 @@
+-- Set leader key before loading any plugins
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -12,31 +15,12 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+require('core.keymaps')
+require('core.options')
+require("lazy").setup('plugins')
 
 -- [[ Setting options ]]
--- Performance Improvements
-vim.opt.lazyredraw = true
-vim.opt.redrawtime = 1500
-vim.opt.timeoutlen = 500
-vim.opt.updatetime = 250
-vim.opt.synmaxcol = 240
 -- See `:help vim.o`
--- Set highlight on search
-vim.o.hlsearch = false
--- Make line numbers default
-vim.wo.number = true
--- Enable mouse mode
-vim.o.mouse = 'a'
--- Enable break indent
-vim.o.breakindent = true
--- Save undo history
-vim.o.undofile = true
--- Case insensitive searching UNLESS /C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
--- Decrease update time
-vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
 -- Set themes
 vim.o.termguicolors = true
 -- vim.cmd [[colorscheme everforest]]
@@ -44,17 +28,6 @@ vim.cmd [[colorscheme kanagawa]]
 -- vim.cmd [[colorscheme catppuccin]]
 -- vim.cmd [[colorscheme moonfly]]
 -- Set the behavior of tab
-vim.opt.tabstop = 4     -- insert 4 spaces for a tab
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 4  -- the number of spaces inserted for each indentation
-vim.opt.softtabstop = 4 -- number of spaces to use for each step of (auto)indent
-vim.opt.scrolloff = 8
--- [[ Use tab on visual mode ]]
-vim.keymap.set('v', '<Tab>', '>gv', { noremap = true, silent = true })
-vim.keymap.set('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
--- Setup split behavior
-vim.opt.splitbelow                     = true
-vim.opt.splitright                     = true
 
 -- Setup conflict_maker
 vim.g.conflict_marker_highlight_group  = 'Error';
@@ -75,27 +48,12 @@ vim.o.completeopt = 'menuone,noselect'
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 -- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
--- Hanle for yank to clipboard
-vim.opt.clipboard = 'unnamedplus'
--- Remap exit insert mode to jk
-vim.keymap.set('i', 'jk', "<ESC>", { noremap = true, silent = true })
 -- Remap others
 vim.keymap.set('n', '<c-w>', ":bd<CR>", { noremap = true, silent = true, desc = 'Delete current buffer' })
-vim.keymap.set('n', 'o', "o<Esc>", { noremap = true, silent = true, desc = 'Append new line below' })
-vim.keymap.set('n', 'O', "O<Esc>", { noremap = true, silent = true, desc = 'Append new line above' })
-vim.keymap.set('n', '<c-h>', "<c-w>h", { noremap = true, silent = true, desc = 'Switch to Left Window' })
-vim.keymap.set('n', '<c-l>', "<c-w>l", { noremap = true, silent = true, desc = 'Switch to Right Window' })
-vim.keymap.set('n', '<c-j>', "<c-w>j", { noremap = true, silent = true, desc = 'Switch to Below Window' })
-vim.keymap.set('n', '<c-k>', "<c-w>k", { noremap = true, silent = true, desc = 'Switch to Above Window' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -112,8 +70,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- disable netrw at the very start of your init.lua (strongly advised)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
-
-require("lazy").setup('plugins')
 
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
@@ -326,6 +282,11 @@ vim.keymap.set('n', '<leader>gC', require('telescope.builtin').git_bcommits, { d
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
   ensure_installed = { 'go', 'lua', 'python', 'typescript', 'javascript' },
+  modules = {},
+  sync_install = false,
+  auto_install = false,
+  ignore_install = {},
+  parser_install_dir = nil,
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
