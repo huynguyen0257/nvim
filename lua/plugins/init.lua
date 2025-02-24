@@ -26,16 +26,16 @@ return {
     },
   },
 
-  -- Copilot
-  "github/copilot.vim",
-  {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "main",
-    dependencies = {
-      "github/copilot.vim",
-      "nvim-lua/plenary.nvim",
-    },
-  },
+  -- -- Copilot
+  -- "github/copilot.vim",
+  -- {
+  --   "CopilotC-Nvim/CopilotChat.nvim",
+  --   branch = "main",
+  --   dependencies = {
+  --     "github/copilot.vim",
+  --     "nvim-lua/plenary.nvim",
+  --   },
+  -- },
 
   -- Treesitter
   {

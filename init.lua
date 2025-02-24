@@ -1,4 +1,6 @@
--- Set leader key before loading any plugins
+-- Set <space> as the leader key
+-- See `:help mapleader`
+--  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 -- Bootstrap lazy.nvim
@@ -37,18 +39,26 @@ vim.g.conflict_marker_common_ancestors = '^||||||| .*$';
 vim.g.conflict_marker_separator        = '^=======$';
 vim.g.conflict_marker_end              = '^>>>>>>> \\@=';
 
--- [[ Copilot setup tab behavior ]]
-vim.g.copilot_no_tab_map               = true
-vim.api.nvim_set_keymap("i", "<CR>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+-- -- [[ Copilot setup tab behavior ]]
+-- vim.g.copilot_no_tab_map               = true
+-- vim.api.nvim_set_keymap("i", "<CR>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+-- require("CopilotChat").setup {
+--   debug = true, -- Enable debugging
+--   -- See Configuration section for rest,
+--   window = {
+--     layout = "vertical",
+--     width = 0.4,
+--     height = 0.7,
+--     border = "solid",
+--     highlight = "Normal",
+--   }
+-- }
+-- vim.keymap.set('n', '<leader>cc', ':CopilotChat<CR>', { noremap = true, silent = true, desc = '[C]opilot [C]hat Open' })
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt                      = 'menuone,noselect'
 
 -- [[ Basic Keymaps ]]
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 -- Remap for dealing with word wrap
@@ -128,19 +138,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 vim.keymap.set('n', '<c-b>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<c-t>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
 
-
-require("CopilotChat").setup {
-  debug = true, -- Enable debugging
-  -- See Configuration section for rest,
-  window = {
-    layout = "vertical",
-    width = 0.4,
-    height = 0.7,
-    border = "solid",
-    highlight = "Normal",
-  }
-}
-vim.keymap.set('n', '<leader>cc', ':CopilotChat<CR>', { noremap = true, silent = true, desc = '[C]opilot [C]hat Open' })
 
 -- Set lualine as statusline
 -- See `:help lualine.txt`
@@ -414,7 +411,7 @@ end
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
   -- TypeScript/JavaScript
-  tsserver = {},
+  ts_ls = {},
   -- Python
   pyright = {},
   -- Lua
@@ -441,6 +438,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
+  automatic_installation = true
 }
 
 mason_lspconfig.setup_handlers {
@@ -524,9 +522,10 @@ cmp.setup {
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-    { name = 'npm',     keyword_length = 4 },
+    { name = 'npm',       keyword_length = 4 },
     { name = 'path' },
-    { name = 'buffer',  keyword_length = 5 },
+    { name = 'buffer',    keyword_length = 5 },
+    { name = "supermaven" },
   }),
 }
 
