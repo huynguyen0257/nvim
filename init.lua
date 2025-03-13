@@ -441,6 +441,22 @@ mason_lspconfig.setup {
   automatic_installation = true
 }
 
+-- Setup mason-tool-installer
+require("mason-tool-installer").setup {
+  ensure_installed = {
+    "lua-language-server",        -- lua
+    "pyright",                    -- python
+    "terraform-ls",               -- terraform
+    "typescript-language-server", -- typescript
+    "yaml-language-server",       -- yaml
+    "prettier",                   -- prettier formatter
+    "pylint",                     -- python linter
+    "eslint_d",                   -- eslint,
+  },
+  auto_update = true,
+  run_on_start = true,
+}
+
 mason_lspconfig.setup_handlers {
   function(server_name)
     require('lspconfig')[server_name].setup {
