@@ -411,8 +411,10 @@ end
 local util = require("lspconfig.util")
 
 -- Các server bạn muốn bật
+-- Các server bạn muốn bật
 local servers = {
   ts_ls = {
+    cmd = { "typescript-language-server", "--stdio" },
     root_dir = util.root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git")
       or vim.fn.getcwd(),
     filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
@@ -432,28 +434,11 @@ local servers = {
 }
 
 -- Setup neodev cho lua
-require('neodev').setup()
+require("neodev").setup()
 
 -- nvim-cmp capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
--- Mason chỉ dùng để cài binary, không auto start server
-require('mason').setup()
-require("mason-tool-installer").setup {
-  ensure_installed = {
-    "lua-language-server",        -- lua
-    "pyright",                    -- python
-    "terraform-ls",               -- terraform
-    "typescript-language-server", -- typescript
-    "yaml-language-server",       -- yaml
-    "prettier",                   -- prettier formatter
-    "pylint",                     -- python linter
-    "eslint_d",                   -- eslint,
-  },
-  auto_update = true,
-  run_on_start = true,
-}
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
 -- Autostart servers khi mở file
 for server_name, server_opts in pairs(servers) do
@@ -462,6 +447,7 @@ for server_name, server_opts in pairs(servers) do
     local config = vim.tbl_deep_extend("force", default_config, {
       on_attach = on_attach,
       capabilities = capabilities,
+      cmd = server_opts.cmd,
       settings = server_opts.settings or {},
       filetypes = server_opts.filetypes,
       root_dir = server_opts.root_dir,

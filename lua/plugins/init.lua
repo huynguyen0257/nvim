@@ -4,7 +4,6 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
       "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
       "folke/neodev.nvim",
       "nvimtools/none-ls.nvim",
@@ -12,10 +11,24 @@ return {
     }
   },
   {
-    "mason-org/mason-lspconfig.nvim",
-    opts = {},
+    "williamboman/mason-lspconfig.nvim",
+    opts = {
+      ensure_installed = {},
+      -- Explicitly exclude ts_ls from automatic setup
+      automatic_installation = false,
+      handlers = {
+        -- Default handler for servers that don't need custom config
+        function(server_name)
+          -- Skip ts_ls, we handle it manually
+          if server_name == "ts_ls" or server_name == "tsserver" then
+            return
+          end
+          require("lspconfig")[server_name].setup({})
+        end,
+      },
+    },
     dependencies = {
-        { "mason-org/mason.nvim", opts = {} },
+        { "williamboman/mason.nvim", opts = {} },
         "neovim/nvim-lspconfig",
     },
   },
