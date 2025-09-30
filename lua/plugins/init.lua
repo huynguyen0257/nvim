@@ -43,13 +43,19 @@ return {
       "hrsh7th/cmp-path",    -- Path completion
       "hrsh7th/cmp-npm",     -- npm dependencies completion
       "hrsh7th/cmp-buffer",  -- Buffer completion
-      "hrsh7th/cmp-cmdline", -- Command line completion
+      --       "hrsh7th/cmp-cmdline", -- Command line completion
       "David-Kunz/cmp-npm",  -- npm packages completion
     },
   },
 
   -- Copilot
-  "github/copilot.vim",
+  {
+    "github/copilot.vim",
+    event = "InsertEnter",
+    config = function()
+      vim.g.copilot_no_tab_map = true
+    end
+  },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = "main",
@@ -62,9 +68,11 @@ return {
   -- Treesitter
   {
     "nvim-treesitter/nvim-treesitter",
+    event = { "BufReadPost", "BufNewFile" },
     build = ":TSUpdate",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
+    event = { "BufReadPost", "BufNewFile" },
     },
   },
 
@@ -77,15 +85,21 @@ return {
   },
 
   -- Git
-  "lewis6991/gitsigns.nvim",
+  {
+    "lewis6991/gitsigns.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("gitsigns").setup{}
+    end
+  },
   "rhysd/conflict-marker.vim",
 
   -- Themes
-  "navarasu/onedark.nvim",
+  -- "navarasu/onedark.nvim",
   "rebelot/kanagawa.nvim",
-  "sainnhe/everforest",
-  "catppuccin/nvim",
-  "bluz71/vim-moonfly-colors",
+  -- "sainnhe/everforest",
+  -- "catppuccin/nvim",
+  -- "bluz71/vim-moonfly-colors",
 
   -- UI Enhancements
   "nvim-lualine/lualine.nvim",

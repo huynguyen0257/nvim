@@ -111,3 +111,22 @@ o.signcolumn    = 'yes'         -- Decrease update time
 --     g["loaded_" .. plugin] = 1
 -- end
 --
+
+-- =========================================
+-- Additional Performance Optimizations
+-- =========================================
+opt.updatetime      = 100           -- giảm từ 250ms
+opt.timeoutlen      = 300           -- giảm từ 500ms  
+opt.ttimeoutlen     = 10            -- timeout cho key sequences
+opt.redrawtime      = 1000          -- giảm từ 1500ms
+opt.re              = 1             -- dùng regex engine cũ (nhanh hơn)
+
+-- Disable backup files để tăng performance
+opt.backup          = false
+opt.writebackup     = false  
+opt.swapfile        = false
+
+-- Memory và display optimizations
+opt.hidden          = true          -- allow background buffers
+opt.history         = 100           -- limit command history
+opt.synmaxcol       = 200           -- giảm từ 240 - limit syntax highlighting
