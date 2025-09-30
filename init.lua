@@ -53,7 +53,7 @@ vim.g.conflict_marker_end              = '^>>>>>>> \\@=';
 --     highlight = "Normal",
 --   }
 -- }
--- vim.keymap.set('n', '<leader>cc', ':CopilotChat<CR>', { noremap = true, silent = true, desc = '[C]opilot [C]hat Open' })
+vim.keymap.set('n', '<leader>cc', ':CopilotChat<CR>', { noremap = true, silent = true, desc = '[C]opilot [C]hat Open' })
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt                      = 'menuone,noselect'
@@ -375,9 +375,9 @@ local on_attach = function(_, bufnr)
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-  nmap('cd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('cr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('ci', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  nmap('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   -- nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
@@ -409,16 +409,24 @@ end
 --
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
+local util = require("lspconfig.util")
+
 local servers = {
-  -- TypeScript/JavaScript
-  ts_ls = {},
-  -- Python
-  pyright = {},
-  -- Lua
+  ts_ls = {
+    root_dir = util.root_pattern("tsconfig.json", "package.json", "jsconfig.json")
+      or vim.fn.getcwd(),
+    settings = {},
+    filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+  },
+  pyright = {
+    settings = {},
+  },
   lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
+    settings = {
+      Lua = {
+        workspace = { checkThirdParty = false },
+        telemetry = { enable = false },
+      },
     },
   },
 }
@@ -457,15 +465,27 @@ require("mason-tool-installer").setup {
   run_on_start = true,
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
+for server_name, server_opts in pairs(servers) do
+  local default_config = vim.lsp.config[server_name]
+  if default_config then
+    local config = vim.tbl_deep_extend("force", default_config, {
       on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
-}
+      capabilities = capabilities,
+      settings = server_opts.settings or {},
+      filetypes = server_opts.filetypes,
+      root_dir = server_opts.root_dir,
+    })
+
+    -- Chỉ start khi mở buffer có filetype tương ứng
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = config.filetypes or {},
+      callback = function(args)
+        config.root_dir = config.root_dir or vim.fn.getcwd()
+        vim.lsp.start(config)
+      end,
+    })
+  end
+end
 
 -- Turn on lsp status information
 require('fidget').setup({

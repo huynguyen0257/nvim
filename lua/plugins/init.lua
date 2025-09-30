@@ -7,9 +7,17 @@ return {
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
       "folke/neodev.nvim",
-      "jose-elias-alvarez/null-ls.nvim",
+      "nvimtools/none-ls.nvim",
       { "j-hui/fidget.nvim", opts = {} },
     }
+  },
+  {
+    "mason-org/mason-lspconfig.nvim",
+    opts = {},
+    dependencies = {
+        { "mason-org/mason.nvim", opts = {} },
+        "neovim/nvim-lspconfig",
+    },
   },
 
   -- Autocompletion
@@ -27,16 +35,16 @@ return {
     },
   },
 
-  -- -- Copilot
-  -- "github/copilot.vim",
-  -- {
-  --   "CopilotC-Nvim/CopilotChat.nvim",
-  --   branch = "main",
-  --   dependencies = {
-  --     "github/copilot.vim",
-  --     "nvim-lua/plenary.nvim",
-  --   },
-  -- },
+  -- Copilot
+  "github/copilot.vim",
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "main",
+    dependencies = {
+      "github/copilot.vim",
+      "nvim-lua/plenary.nvim",
+    },
+  },
 
   -- Treesitter
   {
